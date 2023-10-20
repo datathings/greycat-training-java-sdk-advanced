@@ -17,6 +17,7 @@ In this training we use the following dataset:
 > Patrick Fleith. (2023). Controlled Anomalies Time Series (CATS) Dataset (Version 2) [Data set]. Solenix Engineering GmbH. https://doi.org/10.5281/zenodo.8338435
 
 It's already located in the repository under the name: ```data_small.csv```
+For training purposes we are using only first 10,000 lines of the dataset.
 
 ### GreyCat setup. It's already setup in this project.
 
