@@ -9,10 +9,10 @@ public class CutData {
 
     public static void main(String[] args) throws IOException {
         String projectRootPath = System.getProperty("user.dir");
-        String inputFilePath = projectRootPath + "/data_small.csv";
-        String outputFilePath = projectRootPath + "/data_small_200_lines.csv";
+        String inputFilePath = projectRootPath + "/data/data.csv";
+        String outputFilePath = projectRootPath + "/data/data_small.csv";
         // Number of lines to take
-        int chunkSize = 200;
+        int chunkSize = 10000;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath));
              BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath))) {
@@ -32,6 +32,6 @@ public class CutData {
             }
         }
 
-        System.out.println("Data chunk written to data_small_200_lines.csv");
+        System.out.println("Data chunk written to data_small.csv");
     }
 }

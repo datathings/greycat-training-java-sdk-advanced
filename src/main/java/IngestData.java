@@ -20,7 +20,7 @@ public class IngestData {
 
         Producer<String, String> producer = new KafkaProducer<>(props);
         String projectRootPath = System.getProperty("user.dir");
-        String filePath = projectRootPath + "/data_small.csv";
+        String filePath = projectRootPath + "/data/data_small.csv";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;

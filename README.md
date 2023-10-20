@@ -16,9 +16,6 @@ In this training we use the following dataset:
 
 > Patrick Fleith. (2023). Controlled Anomalies Time Series (CATS) Dataset (Version 2) [Data set]. Solenix Engineering GmbH. https://doi.org/10.5281/zenodo.8338435
 
-It's already located in the repository under the name: ```data_small.csv```
-For training purposes we are using only first 10,000 lines of the dataset.
-
 ### GreyCat setup. It's already setup in this project.
 
 - GreyCat runtime: https://get.greycat.io/
@@ -51,6 +48,16 @@ For training purposes we are using only first 10,000 lines of the dataset.
           <artifactId>kafka-streams</artifactId>
           <version>${kafka.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.21.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.21.0</version>
+        </dependency>
         […]
       </dependencies>
       […]
@@ -72,32 +79,59 @@ For training purposes we are using only first 10,000 lines of the dataset.
     ```
 As the version above is doomed to be outdated, more recent versions can be checked at https://get.greycat.io/files/sdk/java/testing/
 
-## Start your tutorial here. Start your servers.
+## Start your tutorial here. Prepare the dataset.
 
-- Go to you Kafka directory and start your Kafka ZooKeeper
+- Go to the root directory of the project. Download the dataset to the ```data/``` folder.
+
+  ```bash
+  mkdir -p data
+  curl -L https://huggingface.co/datasets/patrickfleith/controlled-anomalies-time-series-dataset/resolve/main/data.csv > data/data.csv
+  ```
+
+- Stay in the root directory of the project. For training purposes, we will cut the data and use only first 10,000 lines.
+
+  ```bash
+  mvn package exec:java -Dexec.mainClass=CutData
+  ```
+
+  This will cut and save the data to ```/data/data_small.csv``` file
+
+## Start your servers.
+
+- Go to you Kafka directory and start your Kafka ZooKeeper. We are using the commands from official [Kafka tutorial](https://kafka.apache.org/quickstart)
   
-  ```bin/zookeeper-server-start.sh config/zookeeper.properties```
+  ```bash
+  bin/zookeeper-server-start.sh config/zookeeper.properties
+  ```
 
 - Open a new terminal and start the Kafka broker service
   
-  ```bin/kafka-server-start.sh config/server.properties```
+  ```bash
+  bin/kafka-server-start.sh config/server.properties
+  ```
 
 - Go to the root of the project, same folder where the project.gcl file is located and start the greycat server on another terminal
   
-  ```greycat serve --user=1```
+  ```bash
+  greycat serve --user=1
+  ```
 
 ### Start listening to the Kafka stream
 
 - In the root of the project run listener:
   
-  ```mvn package exec:java -Dexec.mainClass=ListenAndProcessData```
+  ```bash
+  mvn package exec:java -Dexec.mainClass=ListenAndProcessData
+  ```
 
   This will start listening to Kafka topic called ```example-data-small-topic``` on the 9092 port.
   On each upcoming event, it will call GreyCat ```project::accumulateData``` endpoint on port 8080 to process the record from the data_small.csv file.
 
 - Open another terminal and injest data to the same Kafka topic.
   
-  ```mvn package exec:java -Dexec.mainClass=IngestData```
+  ```bash
+  mvn package exec:java -Dexec.mainClass=IngestData
+  ```
   
   This will injest ach line in the data_small.csv file as a separate event to the Kafka topic.
 
