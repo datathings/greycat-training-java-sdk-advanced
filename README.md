@@ -10,7 +10,7 @@ This is a training for Java SDK of GreyCat. Here we use an example how you can i
 - Maven 3
 - Kafka (We are using 3.6 version in this tutorial)
 
-### GreyCat setup
+### GreyCat setup. It's already setup in this project.
 
 - GreyCat runtime: https://get.greycat.io/
 - Java:
@@ -63,7 +63,7 @@ This is a training for Java SDK of GreyCat. Here we use an example how you can i
     ```
 As the version above is doomed to be outdated, more recent versions can be checked at https://get.greycat.io/files/sdk/java/testing/
 
-## Setup before running application
+## Start your tutorial here. Start your servers.
 
 - Go to you Kafka directory and start your Kafka ZooKeeper
   
