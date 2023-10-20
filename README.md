@@ -8,7 +8,7 @@ This is a training for Java SDK of GreyCat. Here we use an example how you can i
 
 - Java >= 8
 - Maven 3
-- Kafka
+- Kafka (We are using 3.6 version in this tutorial)
 
 ### GreyCat setup
 
@@ -53,17 +53,6 @@ This is a training for Java SDK of GreyCat. Here we use an example how you can i
           <url>https://get.greycat.io/files/sdk/java/${greycat.version.branch}/${greycat.version.major}/</url>
           <layout>default</layout>
         </repository>
-        <repository>
-            <id>apache.snapshots</id>
-            <name>Apache Development Snapshot Repository</name>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
       </repositories>
       […]
     </project>
@@ -95,12 +84,12 @@ As the version above is doomed to be outdated, more recent versions can be check
   ```mvn package exec:java -Dexec.mainClass=ListenAndProcessData```
 
   This will start listening to Kafka topic called ```example-data-small-topic``` on the 9092 port.
-  On each upcoming events, it will call GreyCat ```project::accumulateData``` endpoint on port 8080 to process the record from the data_small.csv file.
+  On each upcoming event, it will call GreyCat ```project::accumulateData``` endpoint on port 8080 to process the record from the data_small.csv file.
 
 - Open another terminal and injest data to the same Kafka topic.
   
   ```mvn package exec:java -Dexec.mainClass=IngestData```
   
-  This will injest the each line in the data_small.csv file as a separate event to the Kafka topic.
+  This will injest ach line in the data_small.csv file as a separate event to the Kafka topic.
 
 - Wait for 5-10 seconds and you could notice that in real-time in the terminal for the listener the events are being listened and processed by Greycat.
