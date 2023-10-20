@@ -10,6 +10,14 @@ This is a training for Java SDK of GreyCat. Here we use an example how you can i
 - Maven 3
 - Kafka (We are using 3.6 version in this tutorial)
 
+### Dataset
+
+In this training we use the following dataset:
+
+> Patrick Fleith. (2023). Controlled Anomalies Time Series (CATS) Dataset (Version 2) [Data set]. Solenix Engineering GmbH. https://doi.org/10.5281/zenodo.8338435
+
+It's already located in the repository under the name: ```data_small.csv```
+
 ### GreyCat setup. It's already setup in this project.
 
 - GreyCat runtime: https://get.greycat.io/
