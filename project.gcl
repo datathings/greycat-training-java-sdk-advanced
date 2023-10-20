@@ -15,12 +15,6 @@ fn main() {
   }
 }
 
-@expose
-fn getList(value: String): Array<String> {
-  var t = Array<String>::new(3);
-  return t;
-}
-
 // Endpoints
 @write
 @expose
@@ -38,7 +32,7 @@ fn accumulateData(record: String): Array<Gaussian> {
         gaussian!!.add(parseNumber(data_point) as float);
       }
     } catch {
-      println("Couldn't parse number from data point");
+      println("Couldn't parse number from data point, it's probably not float");
     }
   }
   var res: Array<Gaussian> = [];

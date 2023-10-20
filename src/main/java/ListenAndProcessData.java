@@ -5,8 +5,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import ai.greycat.GreyCat;
 import ai.greycat.std;
-// import ai.greycat.std;
-import ai.greycat.std.core;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -21,10 +19,10 @@ public class ListenAndProcessData {
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Arrays.asList("streams-data-small-input-topic"));
+        consumer.subscribe(Arrays.asList("example-data-small-topic"));
 
         while (true) {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
             for (ConsumerRecord<String, String> record : records) {
                 std.core.Array<?>  data = (std.core.Array<?> ) GreyCat.call(greycat, "project::accumulateData", record.value());

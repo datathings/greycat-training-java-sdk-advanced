@@ -15,6 +15,8 @@ public class IngestData {
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        // Keep the data in the topic for the 1 day
+        props.put("retention.ms", "86400000");
 
         Producer<String, String> producer = new KafkaProducer<>(props);
         String projectRootPath = System.getProperty("user.dir");
@@ -23,7 +25,7 @@ public class IngestData {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                ProducerRecord<String, String> record = new ProducerRecord<>("streams-data-small-input-topic", line);
+                ProducerRecord<String, String> record = new ProducerRecord<>("example-data-small-topic", line);
                 System.out.println(record.value());
                 producer.send(record);
             }
