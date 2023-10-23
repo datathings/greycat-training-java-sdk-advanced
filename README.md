@@ -30,7 +30,6 @@ head -n10001 data/dataset.csv > data/data_small.csv
   ```bash
   greycat serve --user=1
   ```
-  The first time you execute this command, the dataset will be imported and preprocessed in GreyCat.
   - By default the disk storage is limited to 10240MB. If one wants to import the whole dataset it might be necessary to raise this limit:
     ```bash
     echo 'GREYCAT_STORE=16384' > .env
