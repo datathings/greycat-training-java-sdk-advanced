@@ -12,8 +12,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- GreyCat version variables -->
         <greycat.version.branch>dev</greycat.version.branch>
-        <greycat.version.major>6.3</greycat.version.major>
-        <greycat.version.minor>9</greycat.version.minor>
+        <greycat.version.major>6.4</greycat.version.major>
+        <greycat.version.minor>0</greycat.version.minor>
         <greycat.version>${greycat.version.major}.${greycat.version.minor}-${greycat.version.branch}</greycat.version>
         <!-- Kafka version -->
         <kafka.version>3.6.0</kafka.version>
@@ -48,4 +48,11 @@
             <layout>default</layout>
         </repository>
     </repositories>
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
 </project>

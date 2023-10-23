@@ -1,4 +1,5 @@
 import java.util.Properties;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -9,7 +10,7 @@ import ai.greycat.std;
 import java.time.Duration;
 import java.util.Arrays;
 
-public class ListenAndProcessData {
+public class KafkaListener {
     public static void main(String[] args) throws Exception {
         GreyCat greycat = new GreyCat("http://localhost:8080");
         Properties props = new Properties();
@@ -25,7 +26,15 @@ public class ListenAndProcessData {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
             for (ConsumerRecord<String, String> record : records) {
-                std.core.Array<?>  data = (std.core.Array<?> ) GreyCat.call(greycat, "project::accumulateData", record.value());
+                std.core.Array splitRecord = std.core.Array.create(greycat);
+                splitRecord.setValues( Arrays.stream(record.value().split(",")).map(value -> {
+                    try {
+                        return Double.parseDouble(value);
+                    } catch (NumberFormatException ex) {
+                        return Double.NaN;
+                    }
+                }).toArray());
+                std.core.Array<?> data = (std.core.Array<?>) GreyCat.call(greycat, "project::accumulateData", splitRecord);
                 System.out.println("API Result: " + data);
             }
         }

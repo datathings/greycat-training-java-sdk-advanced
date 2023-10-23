@@ -4,7 +4,7 @@ This is a training for Java SDK of GreyCat. Here we use an example how you can i
 
 ## Prerequisites
 
-### Python
+### Java
 
 - Java >= 8
 - Maven 3
@@ -16,123 +16,38 @@ In this training we use the following dataset:
 
 > Patrick Fleith. (2023). Controlled Anomalies Time Series (CATS) Dataset (Version 2) [Data set]. Solenix Engineering GmbH. https://doi.org/10.5281/zenodo.8338435
 
-### GreyCat setup. It's already setup in this project.
+```bash
+mkdir -p data
+curl -L https://huggingface.co/datasets/patrickfleith/controlled-anomalies-time-series-dataset/resolve/main/data.csv > data/dataset.csv
+head -n10001 data/dataset.csv > data/data_small.csv
+```
 
-- GreyCat runtime: https://get.greycat.io/
-- Java:
-  - Maven:
-    ```xml
-    <?xml version="1.0" encoding="UTF-8"?>
-    <project>
-      […]
-      <properties>
-        […]
-        // GreyCat
-        <greycat.version.branch>dev</greycat.version.branch>
-        <greycat.version.major>6.3</greycat.version.major>
-        <greycat.version.minor>9</greycat.version.minor>
-        <greycat.version>${greycat.version.major}.${greycat.version.minor}-${greycat.version.branch}</greycat.version>
-        // Kafka
-        <kafka.version>3.6.0</kafka.version>
-      </properties>
-      […]
-      <dependencies>
-        […]
-        <dependency>
-          <groupId>ai.greycat</groupId>
-          <artifactId>sdk</artifactId>
-            <version>${greycat.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.kafka</groupId>
-          <artifactId>kafka-streams</artifactId>
-          <version>${kafka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.21.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.21.0</version>
-        </dependency>
-        […]
-      </dependencies>
-      […]
-      <repositories>
-        […]
-        <repository>
-          <name>GreyCat Java SDK repository</name>
-          <id>get.greycat.io</id>
-          <url>https://get.greycat.io/files/sdk/java/${greycat.version.branch}/${greycat.version.major}/</url>
-          <layout>default</layout>
-        </repository>
-      </repositories>
-      […]
-    </project>
-    ```
-  - Gradle:
-    ```json
-    TODO
-    ```
-As the version above is doomed to be outdated, more recent versions can be checked at https://get.greycat.io/files/sdk/java/testing/
+## Run
 
-## Start your tutorial here. Prepare the dataset.
+- Following [Apache Kakfa quickstart](https://kafka.apache.org/quickstart) instructions, start both the ZooKeeper & Kakfa broker services.
 
-- Go to the root directory of the project. Download the dataset to the ```data/``` folder.
-
-  ```bash
-  mkdir -p data
-  curl -L https://huggingface.co/datasets/patrickfleith/controlled-anomalies-time-series-dataset/resolve/main/data.csv > data/data.csv
-  ```
-
-- Stay in the root directory of the project. For training purposes, we will cut the data and use only first 10,000 lines.
-
-  ```bash
-  mvn package exec:java -Dexec.mainClass=CutData
-  ```
-
-  This will cut and save the data to ```/data/data_small.csv``` file
-
-## Start your servers.
-
-- Go to you Kafka directory and start your Kafka ZooKeeper. We are using the commands from official [Kafka tutorial](https://kafka.apache.org/quickstart)
-  
-  ```bash
-  bin/zookeeper-server-start.sh config/zookeeper.properties
-  ```
-
-- Open a new terminal and start the Kafka broker service
-  
-  ```bash
-  bin/kafka-server-start.sh config/server.properties
-  ```
-
-- Go to the root of the project, same folder where the project.gcl file is located and start the greycat server on another terminal
-  
+- Start the GreyCat server:
   ```bash
   greycat serve --user=1
   ```
+  The first time you execute this command, the dataset will be imported and preprocessed in GreyCat.
+  - By default the disk storage is limited to 10240MB. If one wants to import the whole dataset it might be necessary to raise this limit:
+    ```bash
+    echo 'GREYCAT_STORE=16384' > .env
+    ```
+    It is important to notice that on Windows systems, a space of this size is fully reserved as soon as GreyCat starts.
 
-### Start listening to the Kafka stream
-
-- In the root of the project run listener:
-  
+- Start the Kafka listener:
   ```bash
-  mvn package exec:java -Dexec.mainClass=ListenAndProcessData
+  mvn package exec:java -Dexec.mainClass=KafkaListener
   ```
-
-  This will start listening to Kafka topic called ```example-data-small-topic``` on the 9092 port.
-  On each upcoming event, it will call GreyCat ```project::accumulateData``` endpoint on port 8080 to process the record from the data_small.csv file.
-
-- Open another terminal and injest data to the same Kafka topic.
+  This will start listening to a Kafka topic called `example-data-small-topic` on the 9092 port.
+  On each incoming event, it will call GreyCat `project::accumulateData` endpoint on port 8080 to process the record from the data_small.csv file.
   
+- Run the Kafka publisher:
   ```bash
-  mvn package exec:java -Dexec.mainClass=IngestData
+  mvn package exec:java -Dexec.mainClass=KafkaPublisher
   ```
+  This will publish each line from `data_small.csv` file as a separate event into Kafka topic.
   
-  This will injest ach line in the data_small.csv file as a separate event to the Kafka topic.
-
-- Wait for 5-10 seconds and you could notice that in real-time in the terminal for the listener the events are being listened and processed by Greycat.
+- Wait for a few seconds. You should notice that in real-time in the terminal for the listener the events are being listened and processed by GreyCat.

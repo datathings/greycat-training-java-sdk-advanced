@@ -7,7 +7,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.streams.StreamsConfig;
 
-public class IngestData {
+public class KafkaPublisher {
 
     public static void main(String[] args) throws Exception {
         Properties props = new Properties();

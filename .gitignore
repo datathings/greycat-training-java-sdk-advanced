@@ -1,4 +1,5 @@
 /.idea/
+/data/
 /gcdata/
 /target/
 /kafka/

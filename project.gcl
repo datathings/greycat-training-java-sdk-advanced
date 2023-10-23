@@ -3,60 +3,29 @@ use io;
 use util;
 
 // Graph
-var data: nodeList<String>;
-var columns: Map<int, Gaussian>;
+var columns: nodeList<Gaussian>;
 
 fn main() {
-  if (data == null) {
-    data = nodeList<String>::new();
-  }
   if (columns == null) {
-    columns = Map<int, Gaussian>::new();
+    columns = nodeList<Gaussian>::new();
   }
 }
 
 // Endpoints
 @write
 @expose
-fn accumulateData(record: String): Array<Gaussian> {
-  var arr = split(record, ',');
-  for (var i = 1; i < arr.size(); i++) {
-    var data_point = arr[i];
-    try {
-      if (columns.get(i) == null) {
-        var gaussian = Gaussian {};
-        gaussian.add(parseNumber(data_point) as float);
-        columns.set(i, gaussian);
-      } else {
-        var gaussian = columns.get(i);
-        gaussian!!.add(parseNumber(data_point) as float);
-      }
-    } catch {
-      println("Couldn't parse number from data point, it's probably not float");
+fn accumulateData(record: Array<float>): Array<Gaussian> {
+  for (index, value in record) {
+    var gaussian = columns.get(index);
+    if (gaussian == null) {
+      gaussian = Gaussian {};
+      columns.set(index, gaussian);
     }
+    gaussian!!.add(value);
   }
-  var res: Array<Gaussian> = [];
-  for (key, value in columns) {
-    res.add(value);
+  var res: Array<Gaussian> = Array<Gaussian>::new(columns.size());
+  for (index, value in columns) {
+    res.set(index, value);
   }
-
   return res;
-}
-
-fn split(input: String, delimiter: char): Array<String> {
-  var result: Array<String> = [];
-  var currentToken: String = "";
-
-  for (var i = 0; i < input.size(); i++) {
-    var c: char = input.get(i);
-    if (c == delimiter) {
-      result.add(currentToken);
-      currentToken = "";
-    } else {
-      currentToken = "${currentToken}${c}";
-    }
-  }
-
-  result.add(currentToken);
-  return result;
 }
